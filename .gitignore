@@ -79,6 +79,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-*.meta
 Assets/Demigiant/DOTween/DOTween43.dll
 *.mdb
