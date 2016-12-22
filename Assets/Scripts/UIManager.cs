@@ -4,28 +4,17 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
-    
-    public GameObject playButton;
-    public GameObject levelSelect;
-    public GameObject creditsButton;
+
+    public GameObject Camera;
+    public GameObject[] CamPositions;
+    public bool levelSelect;
+
     Vector3 levelSelectPos;
     bool active;
 
     public GameObject levelSelectPanel;
-    public GameObject levelSelectPanelOpenRef;
-    public GameObject levelSelectPanelCloseRef;
-
-    public GameObject AsPanel;
-    public GameObject BsPanel;
-    public GameObject CsPanel;
-    public GameObject AsOpenRef;
-    public GameObject BsOpenRef;
-    public GameObject CsOpenRef;
-    public GameObject ClosedRef;
 
     public GameObject LevelInfo;
-    public GameObject LevelInfoOpenRef;
-    public GameObject LevelInfoCloseRef;
 
     public Text levelText;
     public int levelNum;
@@ -35,14 +24,68 @@ public class UIManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        if(SceneManager.GetActiveScene().buildIndex == 0)
+
+    }
+
+    public void DisplayLevelInfo(string level)
+    {
+        levelText.text = level;
+    }
+
+    public void SetNextLevel(int level)
+    {
+        levelNum = level;
+    }
+
+    public void PlayLevel()
+    {
+        SceneManager.LoadScene(levelNum);
+    }
+
+    public void Reload()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void Nextlevel()
+    {
+        if(SceneManager.GetActiveScene().buildIndex < 15)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void MoveCam(int camNum)
+    {
+        iTween.MoveTo(Camera, CamPositions[camNum - 1].transform.position, 1.0f);
+    }
+
+    public void SetLevelBool(bool value)
+    {
+        levelSelect = value;
+    }
+
+    public void LevelInfoCam()
+    {
+        iTween.MoveTo(Camera, CamPositions[(levelSelect ? 1 : 0)].transform.position, 1.0f);
+    }
+
+    // Update is called once per frame
+    void Update () {
+	    
+	}
+}
+
+
+/* DEPRECATED CODE
+ * 
+ * 
+ *         if(SceneManager.GetActiveScene().buildIndex == 0)
         {
             active = false;
             levelSelectPos = levelSelect.transform.position;
         }
-    }
 
-    public void LevelSelect()
+
+ *     public void LevelSelect()
     {
         active = !active;
 
@@ -56,14 +99,13 @@ public class UIManager : MonoBehaviour {
         }
         else
         {
-            SlideLevelsIn();
+            //SlideLevelsIn();
             iTween.ScaleTo(playButton, new Vector3(1, 1, 1), 0.5f);
             iTween.ScaleTo(creditsButton, new Vector3(1, 1, 1), 0.5f);
             iTween.MoveTo(levelSelect, levelSelectPos, 0.8f);
         }        
     }
-
-    void SlideLevelsIn()
+ *     void SlideLevelsIn()
     {
         if (active)
         { 
@@ -108,35 +150,4 @@ public class UIManager : MonoBehaviour {
     {
         iTween.MoveTo(LevelInfo, LevelInfoCloseRef.transform.position, 0.5f);
     }
-
-    public void DisplayLevelInfo(string level)
-    {
-        levelText.text = level;
-    }
-
-    public void SetNextLevel(int level)
-    {
-        levelNum = level;
-    }
-
-    public void PlayLevel()
-    {
-        SceneManager.LoadScene(levelNum);
-    }
-
-    public void Reload()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void Nextlevel()
-    {
-        if(SceneManager.GetActiveScene().buildIndex < 15)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-    }
-
-    // Update is called once per frame
-    void Update () {
-	    
-	}
-}
+*/
