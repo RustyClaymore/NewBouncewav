@@ -55,7 +55,11 @@ public class UIManager : MonoBehaviour {
 
     public void MoveCam(int camNum)
     {
-        iTween.MoveTo(Camera, CamPositions[camNum - 1].transform.position, 1.0f);
+        Debug.Log("clicked the button" + camNum);
+        iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[camNum - 1].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
+      //  iTween.MoveTo(Camera, iTween.Hash("path",[Vector3(0,200,0),Vector3(200,0,0)],"time",2.0f));
+       // iTween.MoveTo(Camera, CamPositions[camNum - 1].transform.position, 1.0f);
+       
     }
 
     public void SetLevelBool(bool value)
@@ -65,7 +69,8 @@ public class UIManager : MonoBehaviour {
 
     public void LevelInfoCam()
     {
-        iTween.MoveTo(Camera, CamPositions[(levelSelect ? 1 : 0)].transform.position, 1.0f);
+        iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[(levelSelect ? 1:0)].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
+       // iTween.MoveTo(Camera, CamPositions[(levelSelect ? 1 : 0)].transform.position, 1.0f);
     }
 
     // Update is called once per frame
