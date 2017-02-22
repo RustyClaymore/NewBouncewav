@@ -21,10 +21,11 @@ public class UIManager : MonoBehaviour {
 
     public GameObject EndLevelOverlay;
 
+	public Transform currentMount;
     // Use this for initialization
     void Start()
     {
-
+		currentMount = Camera.transform;
     }
 
     public void DisplayLevelInfo(string level)
@@ -55,8 +56,10 @@ public class UIManager : MonoBehaviour {
 
     public void MoveCam(int camNum)
     {
-        Debug.Log("clicked the button" + camNum);
-        iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[camNum - 1].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
+        
+		Debug.Log("clicked the button" + camNum);
+		currentMount = CamPositions [camNum - 1].transform;
+       // iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[camNum - 1].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
       //  iTween.MoveTo(Camera, iTween.Hash("path",[Vector3(0,200,0),Vector3(200,0,0)],"time",2.0f));
        // iTween.MoveTo(Camera, CamPositions[camNum - 1].transform.position, 1.0f);
        
@@ -69,13 +72,15 @@ public class UIManager : MonoBehaviour {
 
     public void LevelInfoCam()
     {
-        iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[(levelSelect ? 1:0)].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
+		currentMount = CamPositions [(levelSelect ? 1 : 0)].transform;
+       // iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[(levelSelect ? 1:0)].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
        // iTween.MoveTo(Camera, CamPositions[(levelSelect ? 1 : 0)].transform.position, 1.0f);
     }
 
     // Update is called once per frame
     void Update () {
-	    
+		Camera.transform.position = Vector3.Lerp (Camera.transform.position, currentMount.position, 0.03f);
+		Camera.transform.rotation = Quaternion.Slerp (Camera.transform.rotation, currentMount.rotation, 0.03f);
 	}
 }
 
