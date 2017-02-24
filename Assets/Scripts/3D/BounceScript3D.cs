@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine.UI;
@@ -17,12 +17,12 @@ using UnityEngine.UI;
 public class BounceScript3D : MonoBehaviour {
 
     // ******************* PUBLIC **************************//
-    public Vector3[] patrolPoints;
-
     public float rotationSpeed = 5;
-    public Transform BoomOnTheWall;
     public float bouncingSpeed = 10;
     public int bouncingDirection = 1;
+
+    public Transform bounceParticleRight;
+    public Transform bounceParticleLeft;
 
     public float bouncingCooldown;
 
@@ -53,6 +53,8 @@ public class BounceScript3D : MonoBehaviour {
     private Camera mainCamera;
     private GameObject musicPlayer;
 
+    private RewindStart RewindAnimation;
+
     private Text text;
     private Text timer;
 
@@ -60,7 +62,8 @@ public class BounceScript3D : MonoBehaviour {
 
     private bool gameStarted = false;
     private bool gameOver = false;
-    private bool musicIsPlaying = false;
+    public bool musicIsPlaying = false;
+    private bool rewinding = false;
 
     private GameObject endLevelVortex;
 
@@ -78,15 +81,17 @@ public class BounceScript3D : MonoBehaviour {
     void Start () {
         timeSinceStart = PlayerPrefs.GetFloat("timeSinceStart", 0);
 
-        timer = GameObject.FindGameObjectWithTag("TimerText").GetComponent<Text>();
-        text = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
+        //timer = GameObject.FindGameObjectWithTag("TimerText").GetComponent<Text>();
+        //text = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
+
+        RewindAnimation = GetComponent<RewindStart>();
 
         mainCamera = Camera.main;
         musicPlayer = GameObject.FindGameObjectWithTag("MusicPlayer");
 
-        timer.text = "TIME\n" + string.Format("{0:00}:{1:00}", (int)(timeSinceStart / 60), (int)(timeSinceStart % 60));
+        //timer.text = "TIME\n" + string.Format("{0:00}:{1:00}", (int)(timeSinceStart / 60), (int)(timeSinceStart % 60));
 
-        text.text = " DEATHS\n" + PlayerPrefs.GetInt("Deaths");
+        //text.text = " DEATHS\n" + PlayerPrefs.GetInt("Deaths");
         bouncingActualCooldown = bouncingCooldown;
 
         endLevelVortex = GameObject.FindGameObjectWithTag("EndLevelVortex");
@@ -107,8 +112,13 @@ public class BounceScript3D : MonoBehaviour {
         
             transform.Rotate(new Vector3(0, rotationSpeed, 0) * Time.deltaTime);
        
+            if(!gameStarted && !rewinding)
+            {
+                musicPlayer.GetComponent<AudioSource>().Stop();
+            }
 
-            if (Input.anyKeyDown && !gameStarted)
+
+            if (Input.anyKeyDown && !gameStarted && !rewinding)
             {
                 gameStarted = true;
             }
@@ -117,11 +127,16 @@ public class BounceScript3D : MonoBehaviour {
             if(gameOver)
             {
                 PlayerPrefs.SetFloat("timeSinceStart", timeSinceStart);
-                timeBeforeRestart += Time.deltaTime;
-
-                if ((timeBeforeRestart > coolDownBeforeRestart) && Input.anyKeyDown)
+                //timeBeforeRestart += Time.deltaTime;
+                //if ((/*(timeBeforeRestart > coolDownBeforeRestart) ||*/RewindAnimation.Implosion) && Input.anyKeyDown/* && Time.time - timeBeforeRestart > 1f*/)
+                //{
+                    //Application.LoadLevel(Application.loadedLevel);
+                    //timeBeforeRestart = Time.time;
+                if((RewindAnimation.Implosion) && Input.anyKeyDown)
                 {
-                    Application.LoadLevel(Application.loadedLevel);
+                    rewinding = true;
+                    StartCoroutine(musicPlayer.GetComponent<MusicPlayer>().PlayRewindSound());
+                    RewindAnimation.doImplosion();
                 }
             }
         }
@@ -138,7 +153,7 @@ public class BounceScript3D : MonoBehaviour {
         {
             transform.Translate(new Vector3(bouncingSpeed, 0, 0) * bouncingDirection * Time.deltaTime, Space.World);
             timeSinceStart += Time.deltaTime;
-            timer.text = "TIME\n" + string.Format("{0:00}:{1:00}", (int)(timeSinceStart / 60), (int)(timeSinceStart % 60));
+            //timer.text = "TIME\n" + string.Format("{0:00}:{1:00}", (int)(timeSinceStart / 60), (int)(timeSinceStart % 60));
         }
 
         if (enteredVortex)
@@ -171,10 +186,19 @@ public class BounceScript3D : MonoBehaviour {
             if (collision.gameObject.tag == "BouncyObject" && bouncingActualCooldown < 0)
             {
                 bouncingActualCooldown = bouncingCooldown;
+
+                if (bouncingDirection == 1)
+                {
+                    Instantiate(bounceParticleRight, transform.position + Vector3.right, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(bounceParticleLeft, transform.position + Vector3.left, Quaternion.identity);
+                }
+
                 bouncingDirection *= -1;
 
                 GetComponent<AudioSource>().PlayOneShot(bipSound);
-                Instantiate(BoomOnTheWall,transform.position, Quaternion.identity);
 
                 Vibration.Vibrate(10);
 
@@ -182,21 +206,25 @@ public class BounceScript3D : MonoBehaviour {
             }
             else if (collision.gameObject.tag == "Enemy")
             {
+                musicPlayer.GetComponent<MusicPlayer>().startedPlaying = false;
+                musicPlayer.GetComponent<MusicPlayer>().StopCurrentClip();
+
                 GetComponent<AudioSource>().PlayOneShot(explosion);
                 Vibration.Vibrate(100);
 
                 gameOver = true;
-                GetComponent<Renderer>().enabled = false;
-                Instantiate(deathParticles, transform.position, Quaternion.identity);
+                RewindAnimation.initExplosion();
+                SetRender(false);
+                //Instantiate(deathParticles, transform.position, Quaternion.identity);
 
                 PlayerPrefs.SetInt("Deaths", PlayerPrefs.GetInt("Deaths", 0) + 1);
-                text.text = " DEATHS\n" + PlayerPrefs.GetInt("Deaths");
+                //text.text = " DEATHS\n" + PlayerPrefs.GetInt("Deaths");
             }
 
             if (!musicIsPlaying)
             {
                 musicIsPlaying = true;
-                musicPlayer.GetComponent<AudioSource>().Play();
+                musicPlayer.GetComponent<MusicPlayer>().PlayRandomClip();
             }
 
             mainCamera.DOShakePosition(cameraShakeDuration, cameraShakeStrength, cameraShakeVibrato, cameraShakeRandomness, true);
@@ -226,4 +254,29 @@ public class BounceScript3D : MonoBehaviour {
     {
         return gameOver;
     }
+
+    public bool GetGameStart() { return gameStarted; }
+
+    public bool Rewinding {
+        set { rewinding = value; }
+        get { return rewinding; }
+    }
+
+    public void SetRender(bool input)
+    {
+        GetComponent<Renderer>().enabled = input;
+
+    }
+
+    public void ResetGameInitials()
+    {
+        gameStarted = false;
+        gameOver = false;
+        rewinding = false;
+        timeBeforeNextLevel = 0;
+        timeBeforeRestart = 0;
+        GetComponent<AudioSource>().volume = 0.25f;
+    }
+
+
 }

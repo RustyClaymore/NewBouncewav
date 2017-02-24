@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ public class MusicFFT : MonoBehaviour {
         audioSource = GetComponent<AudioSource>();
         spectrum = new float[sampleSize];
 
-        audioSource.Play();
+        //audioSource.Play();
     }
 
     // Update is called once per frame

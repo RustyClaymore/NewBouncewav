@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
 
-    public GameObject Camera;
+    public GameObject camera;
     public GameObject[] CamPositions;
     public bool levelSelect;
 
@@ -25,7 +25,8 @@ public class UIManager : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-		currentMount = Camera.transform;
+        camera = GameObject.FindGameObjectWithTag("MainCamera");
+		currentMount = camera.transform;
     }
 
     public void DisplayLevelInfo(string level)
@@ -79,8 +80,8 @@ public class UIManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		Camera.transform.position = Vector3.Lerp (Camera.transform.position, currentMount.position, 0.03f);
-		Camera.transform.rotation = Quaternion.Slerp (Camera.transform.rotation, currentMount.rotation, 0.03f);
+		camera.transform.position = Vector3.Lerp (camera.transform.position, currentMount.position, 0.03f);
+		camera.transform.rotation = Quaternion.Slerp (camera.transform.rotation, currentMount.rotation, 0.03f);
 	}
 }
 
