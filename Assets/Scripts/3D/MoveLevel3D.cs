@@ -29,6 +29,12 @@ public class MoveLevel3D : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			if (SceneManager.GetActiveScene().buildIndex == 0)
+				Debug.Log ("wtf");
+			else
+				SceneManager.LoadScene (0);
+		}
         if (!bounceScript.GetGameOver())
         {
             if (controlType == Control_Type.Mouse)
