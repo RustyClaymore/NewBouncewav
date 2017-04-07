@@ -104,9 +104,11 @@ public class UIManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-	//	camera.transform.position = Vector3.Lerp (camera.transform.position, currentMount.position, 0.03f);
-	//	camera.transform.rotation = Quaternion.Slerp (camera.transform.rotation, currentMount.rotation, 0.03f);
-	}
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+    //	camera.transform.position = Vector3.Lerp (camera.transform.position, currentMount.position, 0.03f);
+    //	camera.transform.rotation = Quaternion.Slerp (camera.transform.rotation, currentMount.rotation, 0.03f);
+    }
 }
 
 
