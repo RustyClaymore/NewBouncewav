@@ -25,10 +25,22 @@ public class MoveLevel3D : MonoBehaviour {
     void Start () {
         level = GameObject.FindGameObjectWithTag("Level");
         bounceScript = GetComponent<BounceScript3D>();
-	}
-	
-	// Update is called once per frame
-	void FixedUpdate () {
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+        controlType = Control_Type.Keyboard;
+#elif UNITY_ANDROID
+        controlType = Control_Type.DualTouch;
+#endif
+
+    }
+
+    // Update is called once per frame
+    void FixedUpdate () {
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			if (SceneManager.GetActiveScene().buildIndex == 0)
+				Debug.Log ("wtf");
+			else
+				SceneManager.LoadScene (0);
+		}
         if (!bounceScript.GetGameOver())
         {
             if (controlType == Control_Type.Mouse)

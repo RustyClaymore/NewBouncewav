@@ -27,7 +27,7 @@ public class RewindStart : MonoBehaviour {
     private float explosionSpreadLowerLimit = 0.1f, explosionSpreadUpperLimit = 0.5f, explosionSpeedScaler = 0.02f;
     private float initialTickToStorePath = 0.1f, tickToStorePath; // When path is cut, the tick time will be doubled to maintain consistency of path restoring. 
     //The path lenth greater than half of pathCutThreshold rewinding time will be max time; Otherwise, it's path_length*maxtime/pathcutThreshold to scale the case when player dies at very beginning
-    private float rewindingMaxTime = 1f;
+    private float rewindingMaxTime = 0.5f;
 
     public bool Implosion{get{return imploded;}}
 

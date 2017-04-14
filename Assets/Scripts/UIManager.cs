@@ -22,6 +22,10 @@ public class UIManager : MonoBehaviour {
     public GameObject EndLevelOverlay;
 
 	public Transform currentMount;
+    public GameObject rootMtoP;
+    public GameObject rootPtoM;
+    public GameObject rootMtoS;
+    public GameObject rootStoM;
     // Use this for initialization
     void Start()
     {
@@ -63,7 +67,24 @@ public class UIManager : MonoBehaviour {
        // iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[camNum - 1].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
       //  iTween.MoveTo(Camera, iTween.Hash("path",[Vector3(0,200,0),Vector3(200,0,0)],"time",2.0f));
        // iTween.MoveTo(Camera, CamPositions[camNum - 1].transform.position, 1.0f);
-       
+       if(camNum == 3)
+        {
+            CameraAnimation ca = camera.GetComponent<CameraAnimation>();
+            ca.animationRoots = rootMtoP;
+            ca.Invoke("DrawAnimation", 0.01f);
+        }
+       else if(camNum == 2)
+        {
+            CameraAnimation ca = camera.GetComponent<CameraAnimation>();
+            ca.animationRoots = rootMtoS;
+            ca.Invoke("DrawAnimation", 0.01f);
+        }
+       else if(camNum == 1)
+        {
+            CameraAnimation ca = camera.GetComponent<CameraAnimation>();
+            ca.animationRoots = rootStoM;
+            ca.Invoke("DrawAnimation", 0.01f);
+        }
     }
 
     public void SetLevelBool(bool value)
@@ -74,15 +95,20 @@ public class UIManager : MonoBehaviour {
     public void LevelInfoCam()
     {
 		currentMount = CamPositions [(levelSelect ? 1 : 0)].transform;
-       // iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[(levelSelect ? 1:0)].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
-       // iTween.MoveTo(Camera, CamPositions[(levelSelect ? 1 : 0)].transform.position, 1.0f);
+        // iTween.MoveTo(Camera, iTween.Hash("position", CamPositions[(levelSelect ? 1:0)].transform.position, "easetype", iTween.EaseType.spring, "time", 2f));
+        // iTween.MoveTo(Camera, CamPositions[(levelSelect ? 1 : 0)].transform.position, 1.0f);
+        CameraAnimation ca = camera.GetComponent<CameraAnimation>();
+        ca.animationRoots = rootPtoM;
+        ca.Invoke("DrawAnimation", 0.01f);
     }
 
     // Update is called once per frame
     void Update () {
-		camera.transform.position = Vector3.Lerp (camera.transform.position, currentMount.position, 0.03f);
-		camera.transform.rotation = Quaternion.Slerp (camera.transform.rotation, currentMount.rotation, 0.03f);
-	}
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+    //	camera.transform.position = Vector3.Lerp (camera.transform.position, currentMount.position, 0.03f);
+    //	camera.transform.rotation = Quaternion.Slerp (camera.transform.rotation, currentMount.rotation, 0.03f);
+    }
 }
 
 
