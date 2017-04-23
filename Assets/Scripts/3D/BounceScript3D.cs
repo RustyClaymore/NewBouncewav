@@ -61,7 +61,7 @@ public class BounceScript3D : MonoBehaviour {
     private float bouncingActualCooldown;
 
     private bool gameStarted = false;
-    private bool gameOver = false;
+    public bool gameOver = false;
     public bool musicIsPlaying = false;
     private bool rewinding = false;
 
