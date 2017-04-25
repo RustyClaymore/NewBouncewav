@@ -29,6 +29,8 @@ public class RewindStart : MonoBehaviour {
     //The path lenth greater than half of pathCutThreshold rewinding time will be max time; Otherwise, it's path_length*maxtime/pathcutThreshold to scale the case when player dies at very beginning
     private float rewindingMaxTime = 0.5f;
 
+	public bool autoRewind = true;
+	public float autoRewindWaitTime = 0.5f;
     public bool Implosion{get{return imploded;}}
 
 	// Use this for initialization
@@ -82,8 +84,17 @@ public class RewindStart : MonoBehaviour {
 
 	}
 
+	IEnumerator autoRewindStart(){
+		yield return new WaitForSecondsRealtime(autoRewindWaitTime);
+		if (autoRewind) {
+			doImplosion();
+		}
+	}
+
+
     public void doImplosion()
     {
+
         imploded = false;
         //setBMG();
         StartCoroutine(iconAnim());
@@ -162,8 +173,10 @@ public class RewindStart : MonoBehaviour {
             yield return null;
         }
         Time.timeScale = end;
-        if (end == 0.0f)
-            imploded = true;
+		if (end == 0.0f) {
+			imploded = true;
+			StartCoroutine( autoRewindStart ());
+		}
         if (end == 1.0f)
         {
             rewinding();

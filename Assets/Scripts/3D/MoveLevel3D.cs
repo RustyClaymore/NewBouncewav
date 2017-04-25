@@ -34,10 +34,10 @@ public class MoveLevel3D : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate () {
+	void FixedUpdate () {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
-			if (SceneManager.GetActiveScene().buildIndex == 0)
-				Debug.Log ("wtf");
+			if (SceneManager.GetActiveScene ().buildIndex == 0)
+				Application.Quit ();
 			else
 				SceneManager.LoadScene (0);
 		}

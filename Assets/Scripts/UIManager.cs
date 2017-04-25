@@ -48,6 +48,11 @@ public class UIManager : MonoBehaviour {
         SceneManager.LoadScene(levelNum);
     }
 
+	public void LoadSpecificLevel(int level){
+		SceneManager.LoadScene(level);
+		
+	}
+
     public void Reload()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -103,9 +108,13 @@ public class UIManager : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Application.Quit();
+	void FixedUpdate () {
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			if (SceneManager.GetActiveScene ().buildIndex == 0)
+				Application.Quit ();
+			else
+				SceneManager.LoadScene (0);
+		}
     //	camera.transform.position = Vector3.Lerp (camera.transform.position, currentMount.position, 0.03f);
     //	camera.transform.rotation = Quaternion.Slerp (camera.transform.rotation, currentMount.rotation, 0.03f);
     }
