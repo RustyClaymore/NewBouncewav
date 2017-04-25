@@ -41,7 +41,7 @@ public class MoveLevel3D : MonoBehaviour {
 			else
 				SceneManager.LoadScene (0);
 		}
-        if (!bounceScript.GetGameOver())
+        if (bounceScript.GetGameStart() && !bounceScript.GetGameOver() && !bounceScript.Rewinding)
         {
             if (controlType == Control_Type.Mouse)
             {
