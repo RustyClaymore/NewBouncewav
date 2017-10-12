@@ -132,7 +132,7 @@ public class BounceScript3D : MonoBehaviour {
                 //{
                     //Application.LoadLevel(Application.loadedLevel);
                     //timeBeforeRestart = Time.time;
-                if((RewindAnimation.Implosion) && Input.anyKeyDown)
+                if((RewindAnimation.Implosion))                  // remove Ipput.anykeydown  ---sjw
                 {
                     rewinding = true;
                     StartCoroutine(musicPlayer.GetComponent<MusicPlayer>().PlayRewindSound());

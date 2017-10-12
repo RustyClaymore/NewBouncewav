@@ -11,6 +11,7 @@ public class RewindStart : MonoBehaviour {
     [SerializeField]
     Sprite[] sprites;
     BounceScript3D BS;
+    MoveLevel3D MS;
     List<GameObject> rewindObjects = new List<GameObject>();
     List<Vector3>[] pathList;
     List<Vector3> initPosList = new List<Vector3>();
@@ -29,7 +30,7 @@ public class RewindStart : MonoBehaviour {
     //The path lenth greater than half of pathCutThreshold rewinding time will be max time; Otherwise, it's path_length*maxtime/pathcutThreshold to scale the case when player dies at very beginning
     private float rewindingMaxTime = 0.5f;
 
-	public bool autoRewind = true;
+	bool autoRewind = false;                     // we do not need auto rewind. so i remove the public of this attrivute   ----Richard
 	public float autoRewindWaitTime = 0.5f;
     public bool Implosion{get{return imploded;}}
 
@@ -44,6 +45,7 @@ public class RewindStart : MonoBehaviour {
         //UiCycle = GameObject.Find("rewindCycle");
         theCollider = GetComponent<Collider>();
         BS = GetComponent<BounceScript3D>();
+        MS = GetComponent<MoveLevel3D>();
         rewindObjects.AddRange(GameObject.FindGameObjectsWithTag("Enemy"));
         for(int i = rewindObjects.Count-1; i >=0; --i)
         {
@@ -94,17 +96,22 @@ public class RewindStart : MonoBehaviour {
 
     public void doImplosion()
     {
-
+        MS.enabled = false;
+        Debug.Log("here i enter the doimplosion function");
+        
+        
         imploded = false;
         //setBMG();
         StartCoroutine(iconAnim());
         StartCoroutine(imploding(0.0f, 1.0f, 1.0f));
+        MS.enabled = true;
 
     }
 
 
     public void initExplosion()
     {
+        Debug.Log("here i enter the initExplosion function");
         setCollider(false);
         Random.InitState((int)System.DateTime.Now.Ticks);
         for (int i = 0; i < explosionParticleQuantity; ++i)
@@ -151,6 +158,7 @@ public class RewindStart : MonoBehaviour {
 
     IEnumerator imploding(float start, float end, float time)     //not in Start or Update
     {
+        Debug.Log("entering imploding function");
         Vector3 pPos = transform.position;
         float lastTime = Time.realtimeSinceStartup;
         float timer = 0.0f;
@@ -195,6 +203,7 @@ public class RewindStart : MonoBehaviour {
 
     void rewinding()
     {
+        Debug.Log("entering rewinding function");
         doRewind = false;
         int counter = pathList[0].Count;
         float totalTime = (counter > pathCutThreshold/2)?rewindingMaxTime:counter*rewindingMaxTime/pathCutThreshold;
@@ -213,10 +222,13 @@ public class RewindStart : MonoBehaviour {
     {
 
         yield return new WaitForSecondsRealtime(tick);
+        Debug.Log("the counter is " + counter);
+        Debug.Log("rewind object count is " + rewindObjects.Count);
         if (counter >= 0)
         {
             for (int i = 0; i < rewindObjects.Count; ++i)
             {
+                
                 rewindObjects[i].transform.localPosition = pathList[i][counter];
             }
             StartCoroutine(ReadPath(tick, --counter));
@@ -245,11 +257,13 @@ public class RewindStart : MonoBehaviour {
 
     void loadPath()
     {
+       
         for (int i = 0; i < rewindObjects.Count; ++i)
         {
             pathList[i].Add(rewindObjects[i].transform.localPosition);
         }
         //Debug.LogWarning("pre count: " + pathList[0].Count);
+        //Debug.Log("pre count: " + pathList[0].Count);
         if (pathList[0].Count > pathCutThreshold)
             CutPath();
         //Debug.LogWarning("after count: " + pathList[0].Count);
